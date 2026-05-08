@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스크립트 — Week 1 에이전트와 일하기</title>
+  <style>
+    :root { --bg:#fff; --text:#111; --muted:#666; --line:#e8e8e8; --accent:#f7f7f7; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+    }
+    .wrap { height: 100vh; display: grid; grid-template-rows: auto auto 1fr auto; }
+    .top {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top .breadcrumb {
+      font-size: 13px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
+    }
+    .title {
+      border-bottom: 1px solid var(--line);
+      padding: 14px 16px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .body {
+      margin: 0;
+      padding: 24px 20px;
+      white-space: pre-wrap;
+      line-height: 1.75;
+      font-size: 28px;
+      overflow: auto;
+    }
+    .body.placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+    .controls {
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      align-items: center;
+    }
+    button {
+      border: 1px solid #111;
+      background: #fff;
+      color: #111;
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:disabled {
+      border-color: var(--line);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+    .controls .spacer { flex: 1; }
+    .hint { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <span id="progress">슬라이드 1 / 48</span>
+      <span class="breadcrumb" id="crumb"></span>
+    </div>
+    <div class="title" id="title">슬라이드 1 — 표지</div>
+    <pre class="body" id="body"></pre>
+    <div class="controls">
+      <button type="button" id="prevBtn">이전</button>
+      <button type="button" id="nextBtn">다음</button>
+      <span class="spacer"></span>
+      <span class="hint">← / → 또는 Space로 이동 · 메인 deck과 자동 동기화</span>
+    </div>
+  </div>
+
+  <script>
+    const SYNC_CHANNEL_NAME = "qo-lab-w1-sync";
+    const STORAGE_KEY = "qo-lab-w1-current-slide";
+
+    // 메인 deck과 동일한 source order
+    const DISPLAY_ORDER = Array.from({ length: 48 }, (_, i) => i);
+
+    // 메인 deck SLIDE_META와 동일 (제목·섹션 표시용)
+    const SECTION_LABELS = [
+      "0. 도착 / 체크인",
+      "1. 오리엔테이션",
+      "2. 환경 — VS Code as Cockpit",
+      "3. AI Native 문서 작업",
+      "4. AI vs Agent",
+      "5. Working Framework",
+      "6. Building Blocks",
+      "7. 한 사이클 통합 실습",
+      "8. 배포 — Git / GitHub",
+      "9. 마무리"
+    ];
+    const SLIDE_META = [
+      { section: 0, title: "Week 1 표지" },
+      { section: 0, title: "QR 체크인" },
+      { section: 1, title: "섹션 시작" },
+      { section: 1, title: "강사 소개" },
+      { section: 1, title: "4주 흐름" },
+      { section: 1, title: "운영 방식" },
+      { section: 1, title: "Office Hour" },
+      { section: 1, title: "학습 목표 3가지" },
+      { section: 1, title: "왜 배우는가" },
+      { section: 1, title: "AI-native 변화 5가지" },
+      { section: 1, title: "직군별 시나리오" },
+      { section: 2, title: "섹션 시작" },
+      { section: 2, title: "AI 환경 설정" },
+      { section: 2, title: "Cockpit 4공간" },
+      { section: 2, title: "Cockpit 첫 동작 실습" },
+      { section: 3, title: "섹션 시작" },
+      { section: 3, title: "AI Native 개념" },
+      { section: 3, title: "Markdown" },
+      { section: 3, title: "Markdown 실습" },
+      { section: 3, title: "Mermaid" },
+      { section: 3, title: "Mermaid 실습" },
+      { section: 3, title: "Markmap" },
+      { section: 3, title: "HTML as Artifact" },
+      { section: 4, title: "섹션 시작" },
+      { section: 4, title: "AI vs Agent 개념" },
+      { section: 4, title: "Web / Desktop / Claude Code" },
+      { section: 4, title: "세 곳에서 같은 요청" },
+      { section: 4, title: "주요 명령어" },
+      { section: 4, title: "핵심 자산" },
+      { section: 5, title: "섹션 시작" },
+      { section: 5, title: "기본 작업 방식" },
+      { section: 5, title: "에이전틱 6단계" },
+      { section: 5, title: "design.md" },
+      { section: 5, title: "Plan 먼저" },
+      { section: 6, title: "섹션 시작" },
+      { section: 6, title: "명함 agent 실습" },
+      { section: 6, title: "playwriter skill 실습" },
+      { section: 7, title: "섹션 시작" },
+      { section: 7, title: "한 사이클 4단계" },
+      { section: 7, title: "5개 variation 평가" },
+      { section: 7, title: "Iteration" },
+      { section: 7, title: "skill 적용 / 결과 비교" },
+      { section: 8, title: "섹션 시작" },
+      { section: 8, title: "git / GitHub 개념" },
+      { section: 8, title: "GitHub Pages 배포" },
+      { section: 9, title: "섹션 시작" },
+      { section: 9, title: "Recap" },
+      { section: 9, title: "과제 / W2 예고" }
+    ];
+
+    // 강사용 스크립트 초안 (1~3문장). 사용자가 추후 보강 가능.
+    const scriptsByOriginalIndex = [
+      // 1. 표지
+      "안녕하세요. Quiet Operators Lab Week 1, '에이전트와 일하기' 시간입니다. 4주짜리 여정 중 첫 번째 주, Foundation을 함께 잡습니다.",
+      // 2. QR 체크인
+      "시작 전에 QR을 찍고 두 가지를 입력해 주세요. 오늘 컨디션과 AI-native 레벨 셀프 진단입니다. 끝나면 손을 들어 알려 주세요.",
+      // 3. 섹션 1 인트로
+      "오리엔테이션을 시작하겠습니다. 강사 소개부터 4주 흐름, 운영 방식, 그리고 오늘 학습 목표 3가지까지 빠르게 짚고 갑니다.",
+      // 4. 강사 소개
+      "저는 Quiet Operators Lab을 운영하고 있고, 도메인은 quietoperatorslab.com 입니다. 워크숍 외 자료도 여기에 모입니다.",
+      // 5. 4주 흐름
+      "전체 4주는 Foundation, Tooling, Orchestration, Demo 순서로 굴러갑니다. 오늘은 그 첫 번째인 Foundation, '에이전트와 일하는 기본기'입니다.",
+      // 6. 운영 방식
+      "수업과 과제, AI-native transformation, 그리고 4주차에는 본인이 직접 깎은 업무 자동화를 발표하는 자리를 갖습니다. 4주 후의 본인을 상상하면서 들어 주세요.",
+      // 7. Office Hour
+      "1:1 Office Hour는 온라인으로 진행되고, 본인 업무 자동화를 직접 돕는 시간입니다. 막힌 지점, 지시서 다듬기, agent와 skill 설계 상담까지 가져오시면 됩니다.",
+      // 8. 학습 목표
+      "오늘 끝났을 때 세 가지를 가져가시면 됩니다. 첫째 Claude Code의 명령어와 agent / skill / CLAUDE.md를 다룰 수 있다. 둘째 AI-native, 즉 문서 작업 없이 AI로만 마무리한다. 셋째 GitHub에 올릴 수 있다.",
+      // 9. 왜 배우는가
+      "AI agent 시대에는 1인이 다룰 수 있는 일의 폭이 크게 넓어집니다. 'agent를 돌리며 일한다'는 게 무슨 뜻인지 오늘 손에 익히는 게 목표입니다.",
+      // 10. AI-native 변화 5가지
+      "AI-native로 전환하면 일하는 방식 자체가 다섯 가지로 바뀝니다. 비동기로 돌아가고, 멀티태스킹 부하가 사람 쪽으로 옮겨오고, 시간은 줄지 않고 분량이 늘고, 손보다 지시가 길어지고, 결국 만드는 사람에서 평가하고 결정하는 사람으로 역할이 이동합니다.",
+      // 11. 직군별 시나리오
+      "각 직군이 이 변화를 어떻게 만나는지 한 줄씩 짚어보겠습니다. 본인 직군에 가장 가까운 시나리오를 하나 골라 두세요. 오늘 실습 때 그 시나리오로 사이트를 만들어 봅니다.",
+      // 12. 섹션 2 인트로
+      "이제 환경 이야기로 넘어갑니다. VS Code를 코딩 화면이 아니라 '작업 조종석', Cockpit으로 바라보는 관점부터 잡습니다.",
+      // 13. AI 환경 설정
+      "본격 시작 전에 환경 점검입니다. Claude Code와 VS Code가 잘 도는지, 사전 과제 claude-setup이 끝났는지, GitHub 가입과 gh cli auth login이 됐는지 확인합니다.",
+      // 14. Cockpit 4공간
+      "VS Code의 수많은 메뉴는 잠시 잊고, 네 공간만 먼저 익힙니다. Explorer는 파일을 보는 곳, Terminal은 명령을 실행하는 곳, Source Control은 변경 이력을 보는 곳, Preview는 산출물을 확인하는 곳입니다. 이 네 곳만으로 오늘 충분히 굴러갑니다.",
+      // 15. Cockpit 첫 동작
+      "다섯 단계로 Cockpit을 처음 움직여 봅니다. 폴더를 만들고, VS Code에서 열고, Claude Code에게 현재 폴더와 설치된 extension을 물어보고, 마지막으로 md 파일로 정리해 달라고 합니다.",
+      // 16. 섹션 3 인트로
+      "AI Native 문서 작업 섹션입니다. Word, PPT, HWP를 안 쓰는 이유부터 Markdown, Mermaid, HTML까지 한 번에 보여드리겠습니다.",
+      // 17. AI Native 개념
+      "Word, PPT, HWP는 AI가 잘 다루지 못합니다. 사람을 위한 도구이지 AI를 위한 도구가 아니죠. 그래서 우리는 AI가 잘 다루는 포맷에서 시작합니다.",
+      // 18. Markdown
+      "Markdown은 AI도 잘 쓰고 사람도 보기 좋은 포맷입니다. VS Code extension으로 render mode를 켜면 즉시 보기 좋은 문서가 됩니다.",
+      // 19. Markdown 실습
+      "직접 해 봅시다. Claude Code에게 마크다운 사용 tutorial을 markdown으로 작성해 달라고 요청해 보세요.",
+      // 20. Mermaid
+      "Markdown은 텍스트입니다. 도표가 필요한 순간이 오면 Mermaid를 씁니다. 역시 VS Code extension으로 바로 렌더링됩니다.",
+      // 21. Mermaid 실습
+      "Mermaid 도식을 그리고 png로 저장해 달라고 요청해 보세요. 결과 png를 Preview로 직접 열어 확인합니다.",
+      // 22. Markmap
+      "Markmap extension으로는 mermaid mindmap을 그릴 수 있습니다. 생각 정리에 유용합니다.",
+      // 23. HTML as Artifact
+      "Markdown은 원고이고, HTML은 산출물입니다. HTML은 브라우저만 있으면 열리고, 웹 페이지로 배포까지 가능합니다. 우리가 HTML을 배우는 이유는 웹 개발자가 되기 위해서가 아니라, AI가 만든 결과물을 직접 열어 확인할 수 있어야 하기 때문입니다.",
+      // 24. 섹션 4 인트로
+      "AI vs Agent 섹션입니다. 같은 일을 Web, Desktop App, Claude Code 어디서 하는 게 맞는지 감을 잡습니다.",
+      // 25. AI / Agent 개념
+      "AI가 무엇이고 Agent가 무엇인지 다시 정의해 봅니다. Agent의 전통적 의미는 '대신 일하는 주체'였고, 그 정의가 지금 다시 살아나고 있습니다.",
+      // 26. Web / Desktop / Claude Code
+      "Web은 가볍게 묻고 답받기 좋고, Desktop App은 파일 첨부와 긴 대화에 강합니다. Claude Code는 내 컴퓨터 위에서 직접 실행되는 agent입니다. 같은 요청도 어디서 돌리느냐에 따라 결과가 달라집니다.",
+      // 27. 세 곳에서 같은 요청
+      "직접 비교해 봅시다. 같은 요청을 Web, Desktop App, Claude Code 세 곳에서 돌려 보고 어디가 본인 작업에 맞는지 감을 잡으세요.",
+      // 28. 주요 명령어
+      "Claude Code의 전체 명령어 목록을 한 번 훑고, 그중 자주 쓰는 5개로 좁힙니다. 처음에는 이 5개만 외워도 충분합니다.",
+      // 29. 핵심 자산
+      "Claude Code의 핵심 자산은 네 가지입니다. CLAUDE.md, agent, skill, 그리고 agent.md입니다. agent.md는 Anthropic의 skill creator 역할을 합니다. 이 네 자산이 'AI에게 일을 시키는 단위'가 됩니다.",
+      // 30. 섹션 5 인트로
+      "Working Framework, 에이전틱 6단계 섹션입니다. 모든 작업을 같은 틀로 굴리는 법을 다룹니다.",
+      // 31. 기본 작업 방식
+      "기본은 단순합니다. 프로젝트 폴더를 만들고, VS Code에서 열고, AI와 초안부터 시작합니다. 빈 화면에서 시작하지 않습니다.",
+      // 32. 에이전틱 6단계
+      "여섯 단계는 이렇습니다. 구체화로 브레인스톰과 할 일을 정리하고, context를 정리하고, plan을 받고, 실행하고, 평가하고, iteration합니다. 이 사이클이 오늘 수업의 뼈대입니다.",
+      // 33. design.md
+      "design.md에는 디자인 취향, 참고 사이트, 컬러, 톤을 모읍니다. AI가 매번 다른 결과를 내지 않게 잡아주는 닻입니다.",
+      // 34. Plan 먼저
+      "실행 전에 반드시 plan부터 받습니다. '어떻게 만들지 plan부터 보여줘.' plan을 검토하고 수정한 뒤에 비로소 실행합니다. 이 한 줄이 결과 품질을 가장 크게 바꿉니다.",
+      // 35. 섹션 6 인트로
+      "Building Blocks 섹션입니다. agent와 skill을 손으로 직접 만들고 써 봅니다.",
+      // 36. 명함 agent 실습
+      "첫 번째 실습으로 명함 agent를 만들어 봅니다. 가벼운 agent부터 직접 손에 익히는 게 목표입니다.",
+      // 37. playwriter skill
+      "두 번째 실습은 skill입니다. playwriter를 설치하고 직접 써 보면서, skill이 agent와 어떻게 다른지 감을 잡습니다.",
+      // 38. 섹션 7 인트로
+      "오늘의 메인 실습, 한 사이클 통합 실습입니다. 바이브 코딩으로 6단계를 한 바퀴 돌려 본인의 1페이지 프로필 사이트를 만듭니다.",
+      // 39. 한 사이클 4단계
+      "네 단계로 한 사이클을 돕니다. 본인이 만들 1페이지 사이트 1개를 정하고, CLAUDE.md와 design.md로 context를 묶고, Claude Code에게 plan부터 받아 검토한 뒤, 핵심 plan만 실행합니다.",
+      // 40. 5개 variation 평가
+      "평가 단계에서는 'HTML 1페이지 5개 variation 만들어줘'를 던집니다. 그중 가장 마음에 드는 1개를 베스트로 고릅니다. 평가는 만드는 일만큼 중요한 작업입니다.",
+      // 41. Iteration
+      "베스트를 고른 뒤 개선점 1~2개만 뽑습니다. 그걸 design skill 형태로 응축해 Claude Code에 등록합니다.",
+      // 42. skill 적용 / 결과 비교
+      "등록한 skill을 적용해 다시 한 번 생성합니다. 적용 전 결과와 비교해서 차이를 눈으로 확인합니다. 산출물 두 개가 나옵니다 — 본인의 첫 HTML 페이지와 본인의 첫 design skill.",
+      // 43. 섹션 8 인트로
+      "마지막 15분, 배포입니다. Git과 GitHub로 오늘 만든 사이트를 세상에 올립니다.",
+      // 44. git / GitHub 개념
+      "git, GitHub, commit, push, .gitignore — 각 개념을 짧게 짚습니다. 왜 필요한지, 무엇을 올리고 무엇을 올리지 않는지에 집중합니다.",
+      // 45. GitHub Pages 배포
+      "GitHub CLI로 프로젝트를 올리고 GitHub Pages로 배포합니다. 본인 1페이지 사이트가 공개 URL로 떨어지는 순간입니다.",
+      // 46. 섹션 9 인트로
+      "마무리 섹션입니다. Recap, 과제 안내, W2 예고로 마칩니다.",
+      // 47. Recap
+      "Working framework 6단계를 한 번 더 되짚고, 오늘 학습 목표 3가지가 채워졌는지 함께 점검합니다. Q&A 시간을 충분히 가집니다.",
+      // 48. 과제 / W2 예고
+      "과제는 본인 업무 기반의 '지시서 1건' 작성입니다. 오늘 만든 design.md와 CLAUDE.md를 본인 업무 맥락으로 발전시켜 제출해 주세요. 다음 주는 W2 Tooling입니다."
+    ];
+
+    const scripts = DISPLAY_ORDER.map((i) => scriptsByOriginalIndex[i]);
+
+    const progressEl = document.getElementById("progress");
+    const titleEl = document.getElementById("title");
+    const bodyEl = document.getElementById("body");
+    const crumbEl = document.getElementById("crumb");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentIndex = 0;
+    let channel = null;
+
+    function render() {
+      const meta = SLIDE_META[currentIndex] || { section: 0, title: "" };
+      const sectionLabel = SECTION_LABELS[meta.section] || "";
+
+      progressEl.textContent = `슬라이드 ${currentIndex + 1} / ${DISPLAY_ORDER.length}`;
+      titleEl.textContent = `슬라이드 ${currentIndex + 1} — ${meta.title}`;
+      crumbEl.textContent = `W1 Foundation › ${sectionLabel} › ${meta.title}`;
+
+      const text = scripts[currentIndex];
+      bodyEl.textContent = text || "[ 강사 스크립트를 여기에 작성하세요 ]";
+      bodyEl.classList.toggle("placeholder", !text);
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === DISPLAY_ORDER.length - 1;
+    }
+
+    function send(type, index) {
+      if (!channel) return;
+      const payload = { type };
+      if (typeof index === "number") payload.index = index;
+      channel.postMessage(payload);
+    }
+
+    prevBtn.addEventListener("click", () => send("slide-prev"));
+    nextBtn.addEventListener("click", () => send("slide-next"));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "ArrowDown" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        send("slide-next");
+      }
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp" || event.key === "PageUp") {
+        event.preventDefault();
+        send("slide-prev");
+      }
+    });
+
+    try {
+      const savedIndex = Number(localStorage.getItem(STORAGE_KEY));
+      if (Number.isInteger(savedIndex) && savedIndex >= 0 && savedIndex < DISPLAY_ORDER.length) {
+        currentIndex = savedIndex;
+      }
+    } catch (error) { /* noop */ }
+
+    try {
+      channel = new BroadcastChannel(SYNC_CHANNEL_NAME);
+      channel.addEventListener("message", (event) => {
+        const data = event.data;
+        if (!data || typeof data !== "object") return;
+        if (data.type === "slide-change") {
+          const index = Number(data.index);
+          if (Number.isInteger(index) && index >= 0 && index < DISPLAY_ORDER.length) {
+            currentIndex = index;
+            render();
+          }
+        }
+      });
+    } catch (error) { /* noop */ }
+
+    render();
+  </script>
+</body>
+</html>

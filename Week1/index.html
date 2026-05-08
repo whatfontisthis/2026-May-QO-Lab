@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 1 — 에이전트와 일하기 (Dark)</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="slidesFrame" src="./deck.html" title="dark slides"></iframe>
+
+  <script>
+    const frame = document.getElementById("slidesFrame");
+
+    function applyDarkTheme() {
+      const doc = frame.contentDocument;
+      if (!doc) return;
+      const root = doc.documentElement;
+      root.style.setProperty("--bg", "#000000");
+      root.style.setProperty("--text", "#f5f5f5");
+      root.style.setProperty("--muted", "#bdbdbd");
+      root.style.setProperty("--line", "#2f2f2f");
+
+      const extraStyle = doc.createElement("style");
+      extraStyle.textContent = `
+        body { background: #000 !important; color: #f5f5f5 !important; }
+        a { color: #9ecbff; }
+        pre { background: #0b0b0b; }
+        .qr-box { border-color: #2f2f2f; color: #bdbdbd; }
+      `;
+      doc.head.appendChild(extraStyle);
+    }
+
+    function postToSlides(type) {
+      if (!frame.contentWindow) return;
+      frame.contentWindow.postMessage({ type }, "*");
+    }
+
+    frame.addEventListener("load", applyDarkTheme);
+
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        event.preventDefault();
+        if (event.deltaY > 0) postToSlides("slide-next");
+        if (event.deltaY < 0) postToSlides("slide-prev");
+      },
+      { passive: false }
+    );
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "ArrowDown" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        postToSlides("slide-next");
+      }
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp" || event.key === "PageUp") {
+        event.preventDefault();
+        postToSlides("slide-prev");
+      }
+    });
+  </script>
+</body>
+</html>

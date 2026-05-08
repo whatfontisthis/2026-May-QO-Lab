@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:quietoperatorslab.com)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}
