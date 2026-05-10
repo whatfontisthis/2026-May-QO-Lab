@@ -6,15 +6,16 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 
 ## 학습 자료
 
-### Week 0 — Claude Code 설치
+### Week 0 — Claude Code 환경 설치
 - [설치 가이드 (이 문서 아래)](#week-0--claude-code-설치-가이드) — Windows / macOS 한 줄 설치
-- [<img src="assets/thumbnails/week0-install.jpg" width="280" alt="설치 가이드 영상" />](https://vimeo.com/1190400755)<br>설치 가이드 영상 — 스크립트 설치 따라하기
+- [[VOD]설치 가이드.mp4](https://vimeo.com/1190400755) <br> [<img src="assets/thumbnails/week0-install.jpg" width="280" alt="설치 가이드 영상" />](https://vimeo.com/1190400755)
 
 ### Week 1 — Foundation: 에이전트와 일하기
-- [Week1-Recap.md](Week1-Foundation/Week1-Recap.md) — 수업 핵심 요약
-- [Week1-Assignment.md](Week1-Foundation/Week1-Assignment.md) — 과제 안내 및 제출 방법
-- [슬라이드 덱 (GitHub Pages)](https://whatfontisthis.github.io/2025-May-QO-Lab/Week1-Foundation/deckv2.html) — 브라우저에서 바로 열기
-- [<img src="assets/thumbnails/week1-recap.jpg" width="280" alt="1주차 수업 영상" />](https://vimeo.com/1190869915)<br>1주차 수업 영상 — 수업 리캡 & 과제 안내 (23분부터)
+- [수업 덱.html](https://whatfontisthis.github.io/2025-May-QO-Lab/Week1-Foundation/deckv2.html)
+- [요약 노트.md](Week1-Foundation/Week1-Recap.md)
+- [과제 안내서.md](Week1-Foundation/Week1-Assignment.md)
+- [[VOD]1주차 수업 리뷰 및 과제 안내 (23분부터).mp4](https://vimeo.com/1190869915) <br> [<img src="assets/thumbnails/week1-recap.jpg" width="280" alt="1주차 수업 영상" />](https://vimeo.com/1190869915)
+
 &nbsp;
 
 <br><br><br><br><br><br>
