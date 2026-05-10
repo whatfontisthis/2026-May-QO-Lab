@@ -35,7 +35,7 @@ Week 1에 배운 내용을 습득하며 AI-native 역량을 훈련할 수 있도
 
 ### **2. 수행 방법**
 
-1. **환경 구축 (자동 설치):** 본인 컴퓨터 운영체제에 맞는 명령어를 복사해서 터미널(PowerShell 또는 Terminal)에 붙여넣은 후 실행합니다. 단축키로 html 파일이 열리지 않는 에러를 수정되었습니다. 아래 스크립트를 다시 실행해주세요.
+1. **환경 구축 (자동 설치):** 본인 컴퓨터 운영체제에 맞는 명령어를 복사해서 터미널(PowerShell 또는 Terminal)에 붙여넣은 후 실행합니다. 단축키로 html 파일이 열리지 않는 에러를 수정했습니다. 아래 스크립트를 다시 실행해주세요..
     - **Windows:** `irm https://raw.githubusercontent.com/whatfontisthis/claude-setup/main/install.ps1 | iex`
     - **macOS:** `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/whatfontisthis/claude-setup/main/install.sh)"`
 2. **클로드와 대화하기 (환경 분석):** 설치가 끝나면 **Claude Code**에게 스크립트 링크를 알려주고 다음 내용을 물어보세요. (쉽게 풀어서 설명해달라고 요청해보세요)
