@@ -12,7 +12,7 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 ### Week 1 — Foundation: 에이전트와 일하기
 - [Week1-Recap.md](Week1-Foundation/Week1-Recap.md) — 수업 핵심 요약
 - [Week1-Assignment.md](Week1-Foundation/Week1-Assignment.md) — 과제 안내 및 제출 방법
-- [deckv2.html](Week1-Foundation/deckv2.html) — 슬라이드 덱 
+- [슬라이드 덱 (GitHub Pages)](https://whatfontisthis.github.io/2025-May-QO-Lab/Week1-Foundation/deckv2.html) — 브라우저에서 바로 열기
 
 &nbsp;
 
