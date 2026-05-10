@@ -11,7 +11,7 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 - [[VOD]설치 가이드.mp4](https://vimeo.com/1190400755) <br> [<img src="assets/thumbnails/week0-install.jpg" width="280" alt="설치 가이드 영상" />](https://vimeo.com/1190400755)
 
 ### Week 1 — Foundation: 에이전트와 일하기
-- [수업 덱.html](https://whatfontisthis.github.io/2025-May-QO-Lab/Week1-Foundation/deckv2.html)
+- [수업 덱.html](https://whatfontisthis.github.io/2026-May-QO-Lab/Week1-Foundation/deckv2.html)
 - [요약 노트.md](Week1-Foundation/Week1-Recap.md)
 - [과제 안내서.md](Week1-Foundation/Week1-Assignment.md)
 - [[VOD]1주차 수업 리뷰 및 과제 안내 (23분부터).mp4](https://vimeo.com/1190869915) <br> [<img src="assets/thumbnails/week1-recap.jpg" width="280" alt="1주차 수업 영상" />](https://vimeo.com/1190869915)
