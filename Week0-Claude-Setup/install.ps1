@@ -331,6 +331,7 @@ if (-not (Resolve-VSCodePath)) {
   "workbench.editorAssociations": {
     "*.md": "vscode.markdown.preview.editor"
   },
+  "markdown.preview.doubleClickToSwitchToEditor": true,
   "claudeCode.allowDangerouslySkipPermissions": true,
   "files.exclude": {
     "**/.git": false,
