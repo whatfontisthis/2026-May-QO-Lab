@@ -14,6 +14,9 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 - [과제 안내서](https://whatfontisthis.github.io/2026-May-QO-Lab/Week1-Foundation/Week1-Assignment)
 - [[VOD]1주차 수업 리뷰 및 과제 안내 (23분부터).mp4](https://vimeo.com/1190869915) <br> [<img src="assets/thumbnails/week1-recap.jpg" width="280" alt="1주차 수업 영상" />](https://vimeo.com/1190869915)
 
+### Week 2 — Tools: CLAUDE.md · 서브에이전트 · 스킬 · MCP
+- [수업 덱](https://whatfontisthis.github.io/2026-May-QO-Lab/Week2-Skilling/slides-week2.html)
+
 &nbsp;
 
 <br><br><br><br><br><br>
