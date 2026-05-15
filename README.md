@@ -6,6 +6,7 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 
 ### Week 0 — Claude Code 환경 설치
 - [설치 가이드 (이 문서 아래)](#week-0--claude-code-설치-가이드) — Windows / macOS 한 줄 설치
+- [설정 스크립트](Week0-Claude-Setup/README.md) — `cc` 별칭 설정 & 커스터마이제이션
 - [[VOD]설치 가이드.mp4](https://vimeo.com/1190400755) <br> [<img src="assets/thumbnails/week0-install.jpg" width="280" alt="설치 가이드 영상" />](https://vimeo.com/1190400755)
 
 ### Week 1 — Foundation: 에이전트와 일하기
@@ -146,6 +147,28 @@ VS Code를 한 번 실행 → 새 터미널 열고 `code --version` 재시도.
 | Claude Code | AI 코딩 도구 (본체) |
 | VS Code | 코드 편집기 |
 | VS Code 확장 + 설정 | 확장 8개 + 권장 설정 자동 적용 |
+
+&nbsp;
+
+## 설치 후 설정
+
+### `cc` 별칭 설정
+
+`cc` 명령으로 `claude --dangerously-skip-permissions`를 빠르게 실행하세요.
+
+**Windows:**
+```powershell
+.\Week0-Claude-Setup\setup-cc-alias-windows.ps1
+```
+
+**macOS / Linux:**
+```bash
+./Week0-Claude-Setup/setup-cc-alias-mac.sh
+```
+
+설정 후 쉘을 다시 시작하고 `cc` 명령으로 테스트합니다.
+
+더 많은 설정 옵션은 [Week0 설정 가이드](Week0-Claude-Setup/README.md)를 참고하세요.
 
 &nbsp;
 
