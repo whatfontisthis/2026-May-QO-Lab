@@ -6,7 +6,7 @@ AI-native 워크샵 5월 코호트 학습 자료입니다.
 
 ### Week 0 — Claude Code 환경 설치
 - [설치 가이드 (이 문서 아래)](#week-0--claude-code-설치-가이드) — Windows / macOS 한 줄 설치
-- [설정 스크립트](Week0-Claude-Setup/README.md) — `cc` 별칭 설정 & 커스터마이제이션
+- [[NEW] CC로 클로드 실행](Week0-Claude-Setup/README.md) — 한 글자로 Claude Code 실행
 - [[VOD]설치 가이드.mp4](https://vimeo.com/1190400755) <br> [<img src="assets/thumbnails/week0-install.jpg" width="280" alt="설치 가이드 영상" />](https://vimeo.com/1190400755)
 
 ### Week 1 — Foundation: 에이전트와 일하기
